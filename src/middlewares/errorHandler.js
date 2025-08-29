@@ -1,15 +1,16 @@
+import { HttpError } from 'http-errors';
+
 export const errorHandler = (err, req, res, next) => {
-  if (err.name === 'CastError' && err.path === '_id') {
-    return res.status(400).json({
-      status: 400,
-      message: 'Invalid id',
+  if (err instanceof HttpError) {
+    return res.status(err.statusCode || err.status || 500).json({
+      status: err.statusCode || err.status || 500,
+      message: err.message,
       data: err.message,
     });
   }
-  const status = err.status || err.statusCode || 500;
-  res.status(status).json({
-    status,
-    message: status === 500 ? 'Something went wrong' : err.message || 'Error',
-    data: err.message || null,
+  return res.status(500).json({
+    status: 500,
+    message: 'Something went wrong',
+    data: err.message,
   });
 };
