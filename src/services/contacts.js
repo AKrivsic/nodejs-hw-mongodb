@@ -8,3 +8,21 @@ export async function getAllContacts() {
 export async function getContactById(contactId) {
   return await ContactsCollection.findById(contactId);
 }
+
+export async function createContact(payload) {
+  const contact = await ContactsCollection.create(payload);
+  return contact;
+}
+
+export async function updateContact(contactId, payload, options = {}) {
+  const updated = await ContactsCollection.findByIdAndUpdate(
+    contactId,
+    payload,
+    { new: true, runValidators: true, ...options }
+  );
+  return updated;
+}
+
+export async function deleteContact(contactId) {
+  return await ContactsCollection.findByIdAndDelete(contactId);
+}
