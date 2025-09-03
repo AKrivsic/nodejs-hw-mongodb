@@ -7,8 +7,17 @@ import {
   deleteContact,
 } from '../services/contacts.js';
 
+import { parsePaginationParams } from '../utils/parsePaginationParams.js';
+import { parseSortParams } from '../utils/parseSortParams.js';
+import { parseFilterParams } from '../utils/parseFilterParams.js';
+
 export async function getAllContactsController(req, res) {
-  const data = await getAllContacts();
+  const { page, perPage } = parsePaginationParams(req.query);
+  const { sortBy, sortOrder } = parseSortParams(req.query);
+  const filter = parseFilterParams(req.query);
+
+  const data = await getAllContacts({ page, perPage, sortBy, sortOrder, filter });
+
   res.status(200).json({
     status: 200,
     message: 'Successfully found contacts!',
@@ -33,11 +42,8 @@ export async function getContactByIdController(req, res) {
 
 export async function createContactController(req, res) {
   const { name, phoneNumber, email, isFavourite, contactType } = req.body || {};
-if (!name || !phoneNumber || !contactType) {
-    throw createError(400, 'name, phoneNumber and contactType are required');
-}
 
-const contact = await createContact({
+  const contact = await createContact({
     name,
     phoneNumber,
     email,
@@ -90,5 +96,5 @@ export async function deleteContactController(req, res) {
     throw createError(404, 'Contact not found');
   }
 
-  res.status(204).send(); // bez těla odpovědi
+  res.status(204).send();
 }
