@@ -7,6 +7,7 @@ const contactSchema = new Schema(
     email:       { type: String },
     isFavourite: { type: Boolean, default: false },
     contactType: { type: String, enum: ['work', 'home', 'personal'], required: true, default: 'personal' },
+    userId:      { type: Schema.Types.ObjectId, ref: 'users', required: true },
   },
   { timestamps: true, versionKey: false },
 );

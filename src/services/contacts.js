@@ -2,6 +2,7 @@ import { ContactsCollection } from '../models/contact.js';
 import { calculatePaginationData } from '../utils/calculatePaginationData.js';
 
 export async function getAllContacts({
+  userId,
   page = 1,
   perPage = 10,
   sortBy = 'name',
@@ -11,7 +12,7 @@ export async function getAllContacts({
   const limit = perPage;
   const skip = (page - 1) * perPage;
 
-  const baseQuery = ContactsCollection.find();
+  const baseQuery = ContactsCollection.find({ userId });
 
   if (typeof filter.isFavourite === 'boolean') {
     baseQuery.where('isFavourite').equals(filter.isFavourite);
@@ -35,8 +36,8 @@ export async function getAllContacts({
   };
 }
 
-export async function getContactById(contactId) {
-  return await ContactsCollection.findById(contactId);
+export async function getContactById({ contactId, userId }) {
+  return await ContactsCollection.findOne({ _id: contactId, userId });
 }
 
 export async function createContact(payload) {
@@ -44,15 +45,15 @@ export async function createContact(payload) {
   return contact;
 }
 
-export async function updateContact(contactId, payload, options = {}) {
-  const updated = await ContactsCollection.findByIdAndUpdate(
-    contactId,
+export async function updateContact({ contactId, userId, payload, options = {} }) {
+  const updated = await ContactsCollection.findOneAndUpdate(
+    { _id: contactId, userId },
     payload,
     { new: true, runValidators: true, ...options },
   );
   return updated;
 }
 
-export async function deleteContact(contactId) {
-  return await ContactsCollection.findByIdAndDelete(contactId);
+export async function deleteContact({ contactId, userId }) {
+  return await ContactsCollection.findOneAndDelete({ _id: contactId, userId });
 }
