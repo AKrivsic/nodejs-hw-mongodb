@@ -10,7 +10,7 @@ import {
 export async function getAllContactsController(req, res) {
   const data = await getAllContacts({
     userId: req.user._id,
-    query: req.query, // necháš-li si to parsovat v servisu/utilitách HW4
+    query: req.query, 
   });
 
   res.status(200).json({
