@@ -41,17 +41,15 @@ export async function getContactById({ contactId, userId }) {
 }
 
 export async function createContact(payload) {
-  const contact = await ContactsCollection.create(payload);
-  return contact;
+  return await ContactsCollection.create(payload);
 }
 
 export async function updateContact({ contactId, userId, payload, options = {} }) {
-  const updated = await ContactsCollection.findOneAndUpdate(
+  return await ContactsCollection.findOneAndUpdate(
     { _id: contactId, userId },
     payload,
     { new: true, runValidators: true, ...options },
   );
-  return updated;
 }
 
 export async function deleteContact({ contactId, userId }) {
