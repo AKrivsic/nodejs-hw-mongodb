@@ -7,10 +7,12 @@ import {
   deleteContact,
 } from '../services/contacts.js';
 
+import { getEnvVar } from '../utils/getEnvVar.js';
+import { saveFileToCloudinary } from '../utils/saveFileToCloudinary.js';
+import { saveFileToUploadDir } from '../utils/saveFileToUploadDir.js';
 
 export async function getAllContactsController(req, res) {
   const userId = req.user._id;
-
 
   const page = req.query.page ? parseInt(req.query.page) || 1 : 1;
   const perPage = req.query.perPage ? parseInt(req.query.perPage) || 10 : 10;
@@ -51,10 +53,19 @@ export async function getContactByIdController(req, res) {
 export async function createContactController(req, res) {
   const userId = req.user._id;
   const { name, phoneNumber, email, isFavourite, contactType } = req.body || {};
-
+  const photo = req.file;
 
   if (!name || !phoneNumber || !contactType) {
     throw createError(400, 'name, phoneNumber and contactType are required');
+  }
+
+  let photoUrl;
+  if (photo) {
+    if (getEnvVar('ENABLE_CLOUDINARY') === 'true') {
+      photoUrl = await saveFileToCloudinary(photo);
+    } else {
+      photoUrl = await saveFileToUploadDir(photo);
+    }
   }
 
   const contact = await createContact({
@@ -64,6 +75,7 @@ export async function createContactController(req, res) {
     email,
     isFavourite,
     contactType,
+    photo: photoUrl,
   });
 
   res.status(201).json({
@@ -80,6 +92,23 @@ const pickUpdatable = ({ name, phoneNumber, email, isFavourite, contactType }) =
 export async function patchContactController(req, res) {
   const { contactId } = req.params;
   const userId = req.user._id;
+  const photo = req.file;
+
+  const payload = pickUpdatable(req.body || {});
+
+  if (photo) {
+    let photoUrl;
+    if (getEnvVar('ENABLE_CLOUDINARY') === 'true') {
+      photoUrl = await saveFileToCloudinary(photo);
+    } else {
+      photoUrl = await saveFileToUploadDir(photo);
+    }
+    payload.photo = photoUrl;
+  }
+
+  if (!photo && Object.values(payload).every(v => typeof v === 'undefined')) {
+    throw createError(400, 'No updatable fields provided');
+  }
 
   const updated = await updateContact({ contactId, userId, payload });
   if (!updated) {
