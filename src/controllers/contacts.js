@@ -81,15 +81,6 @@ export async function patchContactController(req, res) {
   const { contactId } = req.params;
   const userId = req.user._id;
 
-  if (!req.body || Object.keys(req.body).length === 0) {
-    throw createError(400, 'Empty request body');
-  }
-
-  const payload = pickUpdatable(req.body);
-  if (Object.values(payload).every(v => typeof v === 'undefined')) {
-    throw createError(400, 'No updatable fields provided');
-  }
-
   const updated = await updateContact({ contactId, userId, payload });
   if (!updated) {
     throw createError(404, 'Contact not found');
