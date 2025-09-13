@@ -17,6 +17,11 @@
       "url": "https://nodejs-hw-mongodb-9dyl.onrender.com"
     }
   ],
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
   "tags": [
     {
       "name": "Contacts",
