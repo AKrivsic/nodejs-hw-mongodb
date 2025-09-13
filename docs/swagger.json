@@ -14,10 +14,19 @@
       "url": "http://localhost:3000"
     },
     {
-      "url": null
+      "url": "https://nodejs-hw-mongodb-9dyl.onrender.com"
     }
   ],
-  "tags": null,
+  "tags": [
+    {
+      "name": "Contacts",
+      "description": "Operations with user contacts"
+    },
+    {
+      "name": "Auth",
+      "description": "Authentication and user management"
+    }
+  ],
   "paths": {
     "/contacts/{contactId}": {
       "get": {
