@@ -7,10 +7,14 @@ info:
     url: http://www.apache.org/licenses/LICENSE-2.0.html
   description: <опис вашого додатку>
 tags:
-  # теги, що ви будете використовувати
+  - name: Contacts
+    description: Operations with user contacts
+  - name: Auth
+    description: Authentication and user management
+
 servers:
   - url: http://localhost:3000
-  - url: #посилання на задеплоєний сайт
+  - url: https://nodejs-hw-mongodb-9dyl.onrender.com
 paths:
   /contacts/{contactId}:
     get:
